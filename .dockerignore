@@ -1,0 +1,76 @@
+# Python cache & compiled files
+__pycache__/
+*.py[cod]
+*.so
+*.pyd
+*.pyo
+*.egg-info/
+*.egg
+
+# Virtual environments (should NOT be copied to Docker)
+env/
+.venv/
+venv/
+
+# OS & editor files
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# LangChain artifacts (regenerate in container if needed)
+faiss_index/
+*.faiss
+*.pkl
+
+# Data & archives (mount as volumes if needed)
+data/
+archive/
+main_archive/
+*.pdf
+
+# Secrets & configs (use Docker secrets/env vars instead)
+.env
+.env.*
+.env.local
+.env.*.local
+
+# Logs (generate in container)
+logs/
+*.log
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+
+# Development files
+flow.excalidraw
+*.excalidraw
+README.md
+LICENSE
+.editorconfig
+
+# Docker files themselves
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
+
+# Testing
+tests/
+*.test.py
+pytest.ini
+.pytest_cache/
+.coverage
+htmlcov/

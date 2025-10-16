@@ -1,12 +1,41 @@
-# Python-generated files
+# Python cache & virtualenv
 __pycache__/
-*.py[oc]
-build/
-dist/
-wheels/
-*.egg-info
+*.py[cod]
+*.so
+*.pyd
+*.pyo
+env/
+.venv/
+*.egg-info/
+*.egg
+*.log
 
-# Virtual environments
-.venv
+# OS & editor files
+.DS_Store
+.vscode/
+.idea/
+
+# LangChain-related
+faiss_index/
+*.faiss
+*.pkl
+
+# Data & archive
+data/
+archive/
+main_archive/
+*.pdf
+
+# Secrets & configs
 .env
+.env.*
+
+# Logs
 logs/
+*.log
+
+# Build/Dist
+dist/
+build/
+multi_doc_chat.egg-info/
+flow.excalidraw
