@@ -1,20 +1,20 @@
-python-dotenv==1.1.1
+python-dotenv
 structlog
 
-langchain==0.3.27
-langchain-community==0.3.27
-langchain-core==0.3.72
+langchain
+langchain-community
+langchain-core
 
-langchain-groq==0.3.6
-langchain-google-genai==2.1.8
-langchain-openai==0.2.10
+langchain-groq
+langchain-google-genai
+langchain-openai
 
-docx2txt==0.9
-ipykernel==6.30.0
-python-multipart==0.0.20
+docx2txt
+ipykernel
+python-multipart
 faiss-cpu
 sentence-transformers
-pypdf==3.14.0
+pypdf
 
 fastapi==0.115.6
 fastapi[standard]

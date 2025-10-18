@@ -3,6 +3,9 @@ from pathlib import Path
 from typing import Iterable, List
 from langchain.schema import Document
 from langchain_community.document_loaders import PyPDFLoader, Docx2txtLoader, TextLoader
+import subprocess
+import shutil
+from langchain.schema import Document
 from multi_doc_chat.logger.custom_logger import CustomLogger as log
 from multi_doc_chat.exceptions.custom_exception import DocumentPortalException
 from fastapi import UploadFile
@@ -18,6 +21,27 @@ def load_documents(paths: Iterable[Path]) -> List[Document]:
             ext = p.suffix.lower()
             if ext == ".pdf":
                 loader = PyPDFLoader(str(p))
+                try:
+                    # Primary approach using PyPDFLoader (pypdf)
+                    pdf_docs = loader.load()
+                    docs.extend(pdf_docs)
+                    continue
+                except Exception as pdf_exc:
+                    # pypdf can fail on malformed / unusual cmap tables (UnboundLocalError)
+                    log.warning("Primary PDF loader failed, attempting pdftotext fallback", path=str(p), error=str(pdf_exc))
+                    # Fall back to system pdftotext (requires poppler-utils)
+                    if shutil.which("pdftotext"):
+                        try:
+                            text = _extract_text_with_pdftotext(p)
+                            # Create a single Document with full text
+                            docs.append(Document(page_content=text, metadata={"source": str(p)}))
+                            continue
+                        except Exception as fallback_exc:
+                            log.error("pdftotext fallback also failed", path=str(p), error=str(fallback_exc))
+                            raise
+                    else:
+                        log.error("pdftotext not available on system, cannot fallback", path=str(p))
+                        raise
             elif ext == ".docx":
                 loader = Docx2txtLoader(str(p))
             elif ext == ".txt":
@@ -42,3 +66,20 @@ class FastAPIFileAdapter:
     def getbuffer(self) -> bytes:
         self._uf.file.seek(0)
         return self._uf.file.read()
+
+
+def _extract_text_with_pdftotext(path: Path) -> str:
+    """Use system pdftotext to extract text from a PDF file. Returns full text."""
+    # Create a temporary output file path
+    out = Path(str(path) + ".txt")
+    try:
+        # -layout preserves original layout better; suppress messages
+        subprocess.run(["pdftotext", "-layout", str(path), str(out)], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        text = out.read_text(encoding="utf-8", errors="ignore")
+        return text
+    finally:
+        try:
+            if out.exists():
+                out.unlink()
+        except Exception:
+            pass
